@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WINGO 30 SECOND - TRADING PLATFORM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+Bengali:wght@400;700&display=swap');
+        :root {
+            --bg: #0a0a2e; --bg2: #1a0a3e; --gold: #f7c948; --orange: #ff6b35;
+            --green: #00e676; --red: #ff1744; --violet: #9c27b0; --blue: #2196f3;
+            --glass: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1);
+            --text: #fff; --text2: rgba(255,255,255,0.7); --text3: rgba(255,255,255,0.5);
+        }
+        body { font-family: 'Noto Sans Bengali', 'Orbitron', sans-serif; background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%); min-height: 100vh; color: var(--text); overflow-x: hidden; }
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .star { position: absolute; border-radius: 50%; background: white; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+        .logo-3d-container { perspective: 800px; width: 80px; height: 80px; margin: 0 auto 8px; }
+        .logo-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateLogo 8s infinite linear; }
+        .logo-3d .face { position: absolute; width: 80px; height: 80px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 28px; color: #fff; text-shadow: 0 0 20px rgba(247,201,72,0.3); border: 2px solid rgba(247,201,72,0.5); }
+        .logo-3d .face.front { background: linear-gradient(135deg, var(--orange), var(--gold)); transform: translateZ(40px); }
+        .logo-3d .face.back { background: linear-gradient(135deg, var(--gold), var(--orange)); transform: rotateY(180deg) translateZ(40px); }
+        .logo-3d .face.left { background: linear-gradient(135deg, #1a0a3e, var(--orange)); transform: rotateY(-90deg) translateZ(40px); }
+        .logo-3d .face.right { background: linear-gradient(135deg, var(--orange), #1a0a3e); transform: rotateY(90deg) translateZ(40px); }
+        .logo-3d .face.top { background: linear-gradient(135deg, var(--gold), #1a0a3e); transform: rotateX(90deg) translateZ(40px); }
+        .logo-3d .face.bottom { background: linear-gradient(135deg, #1a0a3e, var(--gold)); transform: rotateX(-90deg) translateZ(40px); }
+        @keyframes rotateLogo { 0% { transform: rotateX(-15deg) rotateY(0deg); } 25% { transform: rotateX(-15deg) rotateY(90deg); } 50% { transform: rotateX(-15deg) rotateY(180deg); } 75% { transform: rotateX(-15deg) rotateY(270deg); } 100% { transform: rotateX(-15deg) rotateY(360deg); } }
+        .login-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 100; background: linear-gradient(135deg, #0a0a2e, #1a0a3e); }
+        .login-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; padding: 30px 25px; width: 90%; max-width: 380px; text-align: center; }
+        .login-card .logo { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); margin-bottom: 5px; }
+        .login-card .sub { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; }
+        .login-card input:focus { border-color: var(--gold); }
+        .login-card .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--orange), var(--gold)); color: var(--bg); font-weight: 900; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; transition: 0.3s; }
+        .login-card .btn:hover { transform: translateY(-2px); }
+        .login-card .switch { margin-top: 12px; font-size: 13px; color: var(--text3); cursor: pointer; }
+        .login-card .switch span { color: var(--gold); }
+        .login-card .error { color: var(--red); font-size: 12px; margin: 8px 0; display: none; }
+        .app { display: none; }
+        .app.show { display: block; }
+        .container { width: 100%; max-width: 460px; margin: 0 auto; padding: 10px 10px 80px; position: relative; z-index: 1; }
+        .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 10px; }
+        .header { text-align: center; margin-bottom: 5px; }
+        .header .logo-text { font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, var(--orange), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header .sub { font-size: 12px; color: var(--text3); }
+        .header .uid { font-size: 11px; color: var(--gold); font-family: monospace; margin-top: 3px; }
+        .header .bal { font-size: 14px; color: var(--text2); margin-top: 5px; }
+        .header .bal span { color: var(--gold); font-weight: 700; font-family: 'Orbitron', monospace; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 99; background: rgba(10,10,46,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0 12px; }
+        .bottom-nav .nav-item { text-align: center; cursor: pointer; padding: 5px 15px; border-radius: 10px; transition: 0.3s; flex: 1; }
+        .bottom-nav .nav-item .icon { font-size: 22px; display: block; }
+        .bottom-nav .nav-item .label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+        .bottom-nav .nav-item.active .label { color: var(--gold); }
+        .bottom-nav .nav-item.active { background: rgba(247,201,72,0.1); }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .home-banner { text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(247,201,72,0.1)); border-radius: 16px; border: 1px solid rgba(247,201,72,0.2); margin-bottom: 10px; }
+        .home-banner .big { font-family: 'Orbitron', sans-serif; font-size: 36px; font-weight: 900; color: var(--gold); }
+        .home-banner .sm { font-size: 13px; color: var(--text2); margin-top: 5px; }
+        .game-card { text-align: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 16px; margin-bottom: 10px; }
+        .game-card .period-label { font-size: 11px; color: var(--text3); }
+        .game-card .period-num { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 700; color: var(--gold); }
+        .game-card .timer { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 700; color: var(--orange); margin: 8px 0; }
+        .game-card .timer.warn { color: var(--red); animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .bet-row { display: flex; gap: 8px; margin: 8px 0; }
+        .bet-row .bet-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--border); background: rgba(255,255,255,0.05); cursor: pointer; font-weight: 700; font-size: 14px; transition: 0.3s; color: var(--text); }
+        .bet-row .bet-btn.big { border-color: var(--green); }
+        .bet-row .bet-btn.small { border-color: var(--orange); }
+        .bet-row .bet-btn.green { border-color: var(--green); }
+        .bet-row .bet-btn.red { border-color: var(--red); }
+        .bet-row .bet-btn.violet { border-color: var(--violet); }
+        .bet-row .bet-btn.selected { border-color: var(--gold) !important; background: rgba(247,201,72,0.15); }
+        .bet-row .bet-btn .mult { font-size: 10px; color: var(--gold); display: block; margin-top: 2px; }
+        .amount-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+        .amount-row .amt-btn { padding: 10px 16px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); cursor: pointer; font-family: 'Orbitron', monospace; font-weight: 700; color: var(--text); font-size: 13px; transition: 0.3s; }
+        .amount-row .amt-btn.selected { border-color: var(--gold); background: rgba(247,201,72,0.15); }
+        .confirm-section { display: none; padding: 12px; background: rgba(0,200,83,0.08); border: 1px solid var(--green); border-radius: 12px; margin: 8px 0; }
+        .confirm-section.show { display: block; animation: fadeIn 0.3s; }
+        .btn-gold { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--orange), var(--gold)); color: var(--bg); font-weight: 900; font-size: 14px; cursor: pointer; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; transition: 0.3s; margin: 5px 0; }
+        .btn-gold:hover { transform: translateY(-2px); }
+        .btn-ghost { width: 100%; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; margin: 4px 0; }
+        .btn-ghost:hover { background: rgba(255,255,255,0.12); }
+        .last-results { margin: 10px 0; }
+        .last-results .title { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+        .dots { display: flex; gap: 3px; flex-wrap: wrap; }
+        .dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; cursor: pointer; }
+        .dot.green { background: var(--green); }
+        .dot.red { background: var(--red); }
+        .dot.violet { background: var(--violet); }
+        .dot.big { border: 2px solid var(--blue); }
+        .dot.small { border: 2px solid var(--orange); }
+        .history-tabs { display: flex; gap: 8px; margin: 8px 0; }
+        .history-tabs .tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 12px; color: var(--text3); transition: 0.3s; }
+        .history-tabs .tab.active { background: rgba(247,201,72,0.15); color: var(--gold); }
+        .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin: 4px 0; background: rgba(0,0,0,0.2); border-radius: 10px; font-size: 12px; }
+        .txn-item .status { font-size: 10px; padding: 2px 8px; border-radius: 20px; }
+        .txn-item .status.pending { background: rgba(255,152,0,0.2); color: #ffcc80; }
+        .txn-item .status.approved { background: rgba(0,200,83,0.2); color: #69f0ae; }
+        .txn-item .status.rejected { background: rgba(244,67,54,0.2); color: #ef9a9a; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); font-size: 13px; outline: none; }
+        .form-group input:focus { border-color: var(--gold); }
+        .form-group .hint { font-size: 10px; color: var(--text3); margin-top: 2px; }
+        .alert { padding: 10px; border-radius: 10px; margin: 8px 0; font-size: 12px; font-weight: 600; text-align: center; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert-success { background: rgba(0,200,83,0.12); border: 1px solid var(--green); color: #69f0ae; }
+        .alert-error { background: rgba(244,67,54,0.12); border: 1px solid var(--red); color: #ef9a9a; }
+        .alert-info { background: rgba(33,150,243,0.12); border: 1px solid var(--blue); color: #90caf9; }
+        .alert-warning { background: rgba(255,152,0,0.12); border: 1px solid #ff9800; color: #ffcc80; }
+        .leaderboard-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin: 3px 0; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 12px; }
+        .leaderboard-item .rank { font-weight: 900; width: 24px; text-align: center; }
+        .leaderboard-item .rank.gold { color: #ffd700; }
+        .leaderboard-item .rank.silver { color: #c0c0c0; }
+        .leaderboard-item .rank.bronze { color: #cd7f32; }
+        .admin-user-item { padding: 10px; margin: 4px 0; background: rgba(0,0,0,0.2); border-radius: 10px; font-size: 12px; }
+        .admin-user-item .row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .admin-user-item .row .actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .admin-user-item .row .actions button { padding: 4px 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 10px; font-weight: 600; }
+        .chat-container { max-height: 400px; overflow-y: auto; margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
+        .chat-container .msg { padding: 8px 12px; border-radius: 12px; max-width: 85%; font-size: 12px; line-height: 1.5; }
+        .chat-container .msg.user { background: rgba(247,201,72,0.15); align-self: flex-end; }
+        .chat-container .msg.admin { background: rgba(33,150,243,0.15); align-self: flex-start; }
+        .chat-container .msg .time { font-size: 9px; color: var(--text3); margin-top: 3px; }
+        .chat-container .msg .uid-label { font-size: 9px; color: var(--gold); font-weight: 700; }
+        .admin-notice-bar { background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(247,201,72,0.1)); border: 1px solid rgba(247,201,72,0.3); border-radius: 12px; padding: 12px; margin: 8px 0; cursor: pointer; transition: 0.3s; position: relative; }
+        .admin-notice-bar:hover { background: rgba(247,201,72,0.15); }
+        .admin-notice-bar .title { font-size: 11px; color: var(--gold); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .admin-notice-bar .text { font-size: 12px; color: var(--text2); margin-top: 4px; }
+        .admin-notice-bar .date { font-size: 9px; color: var(--text3); margin-top: 4px; }
+        .admin-notice-bar .badge-new { position: absolute; top: -6px; right: -6px; background: var(--red); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; animation: pulse 1s infinite; }
+        .admin-notice-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .admin-notice-modal.show { display: flex; }
+        .admin-notice-modal .content { background: #1a0a3e; border-radius: 20px; padding: 25px; max-width: 400px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); }
+        .admin-notice-modal .content .item { padding: 12px; margin: 6px 0; background: rgba(0,0,0,0.3); border-radius: 10px; border-left: 3px solid var(--gold); }
+        .messenger-list { max-height: 350px; overflow-y: auto; }
+        .messenger-list .user-item { padding: 10px; margin: 4px 0; background: rgba(0,0,0,0.2); border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .messenger-list .user-item:hover { background: rgba(0,0,0,0.4); }
+        .messenger-list .user-item .row { display: flex; justify-content: space-between; align-items: center; }
+        .messenger-list .user-item .unread { background: var(--red); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .messenger-chat { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 150; display: none; flex-direction: column; padding: 15px; }
+        .messenger-chat.show { display: flex; }
+        .messenger-chat .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .messenger-chat .chat-header .back-btn { background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; }
+        .messenger-chat .chat-header .name { font-weight: 700; color: var(--gold); }
+        .messenger-chat .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .messenger-chat .chat-input { display: flex; gap: 8px; }
+        .messenger-chat .chat-input input { flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; font-size: 13px; outline: none; }
+        .messenger-chat .chat-input input:focus { border-color: var(--gold); }
+        .messenger-chat .chat-input button { padding: 12px 20px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--orange), var(--gold)); color: var(--bg); font-weight: 700; cursor: pointer; }
+        .admin-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .admin-tabs .tab { padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); cursor: pointer; font-size: 11px; color: var(--text3); transition: 0.3s; border: 1px solid transparent; }
+        .admin-tabs .tab.active { background: rgba(247,201,72,0.15); color: var(--gold); border-color: var(--gold); }
+        .admin-section { display: none; }
+        .admin-section.show { display: block; }
+        .notice-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .notice-modal-overlay.show { display: flex; }
+        .notice-modal-box { background: #1a0a3e; border-radius: 20px; padding: 25px; max-width: 420px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); }
+        .notice-modal-box textarea { width: 100%; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; font-size: 13px; outline: none; min-height: 100px; resize: vertical; font-family: inherit; margin: 8px 0; }
+        .notice-modal-box textarea:focus { border-color: var(--gold); }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        ::-webkit-scrollbar-thumb { background: rgba(247,201,72,0.3); border-radius: 10px; }
+        @media (max-width: 400px) { .container { padding: 8px 8px 80px; } .glass { padding: 14px; } .header .logo-text { font-size: 22px; } .game-card .period-num { font-size: 18px; } .game-card .timer { font-size: 22px; } .bet-row .bet-btn { padding: 10px 6px; font-size: 12px; } .amount-row .amt-btn { padding: 8px 12px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<!-- LOGIN -->
+<div class="login-container" id="loginPage">
+    <div class="login-card">
+        <div class="logo-3d-container">
+            <div class="logo-3d">
+                <div class="face front"><span>W</span></div>
+                <div class="face back"><span>30</span></div>
+                <div class="face left"><span>W</span></div>
+                <div class="face right"><span>30</span></div>
+                <div class="face top"><span>W</span></div>
+                <div class="face bottom"><span>30</span></div>
+            </div>
+        </div>
+        <div class="logo">WINGO</div>
+        <div class="sub">30 SECOND TRADING PLATFORM</div>
+        <div id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Gmail">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <div class="error" id="loginError">ভুল তথ্য!</div>
+            <button class="btn" onclick="handleLogin()">সাইন ইন</button>
+            <div class="switch">নতুন? <span onclick="showSignup()">সাইন আপ করুন</span></div>
+        </div>
+        <div id="signupForm" style="display:none;">
+            <input type="email" id="signupEmail" placeholder="Gmail">
+            <input type="password" id="signupPassword" placeholder="Password (6+ characters)">
+            <input type="text" id="signupName" placeholder="আপনার নাম">
+            <div class="error" id="signupError">ত্রুটি!</div>
+            <button class="btn" onclick="handleSignup()">সাইন আপ</button>
+            <div class="switch">ইতিমধ্যে একাউন্ট আছে? <span onclick="showLogin()">সাইন ইন করুন</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- NOTICE MODAL -->
+<div class="notice-modal-overlay" id="noticeModal">
+    <div class="notice-modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:18px;font-weight:700;color:var(--gold);">📢 এডমিন নোটিস</div>
+            <button onclick="closeNoticeModal()" style="background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;">✕</button>
+        </div>
+        <div id="noticeList"><div style="text-align:center;padding:20px;color:var(--text3);">কোনো নোটিস নেই</div></div>
+    </div>
+</div>
+
+<!-- ADMIN MESSENGER OVERLAY -->
+<div class="messenger-chat" id="adminChatOverlay">
+    <div class="chat-header">
+        <button class="back-btn" onclick="closeAdminChat()">←</button>
+        <span class="name" id="adminChatTargetName">ইউজার</span>
+        <span style="font-size:11px;color:var(--text3);">এডমিন</span>
+    </div>
+    <div class="chat-messages" id="adminChatMessages"></div>
+    <div class="chat-input">
+        <input type="text" id="adminChatInput" placeholder="মেসেজ লিখুন..." onkeypress="if(event.key==='Enter')sendAdminChatMsg()">
+        <button onclick="sendAdminChatMsg()">➤</button>
+    </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+    <div class="container">
+        <!-- HEADER -->
+        <div class="glass" style="padding: 12px 18px;">
+            <div class="header">
+                <div class="logo-3d-container" style="width:50px;height:50px;">
+                    <div class="logo-3d" style="animation-duration:6s;width:50px;height:50px;">
+                        <div class="face front" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>W</span></div>
+                        <div class="face back" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>30</span></div>
+                        <div class="face left" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>W</span></div>
+                        <div class="face right" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>30</span></div>
+                        <div class="face top" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>W</span></div>
+                        <div class="face bottom" style="width:50px;height:50px;font-size:18px;border-radius:10px;"><span>30</span></div>
+                    </div>
+                </div>
+                <div class="logo-text">WINGO</div>
+                <div class="sub">30 SECOND TRADING PLATFORM</div>
+                <div class="uid" id="displayUid">UID: 000001</div>
+                <div class="bal">💳 ব্যালেন্স: <span id="displayBalance">00.00</span> টাকা</div>
+            </div>
+        </div>
+        <div id="noticeBarContainer"></div>
+
+        <!-- HOME -->
+        <div class="page active" id="page-home">
+            <div class="home-banner">
+                <div class="big">🎰 WINGO</div>
+                <div class="sm">৩০ সেকেন্ড ট্রেডিং প্ল্যাটফর্মে স্বাগতম!</div>
+            </div>
+            <button class="btn-gold" onclick="showGamePage()" style="font-size:18px;padding:18px;">🎮 গেম খেলুন</button>
+            <div class="last-results" style="margin-top:10px;">
+                <div class="title" style="text-align:center;">📜 শেষ ৫০টি রেজাল্ট</div>
+                <div class="dots" id="homeResultDots"></div>
+            </div>
+        </div>
+
+        <!-- GAME -->
+        <div class="page" id="page-game">
+            <div class="glass">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <div style="font-size:18px;font-weight:700;color:var(--gold);">🎰 WINGO</div>
+                    <button class="btn-ghost" onclick="exitGame()" style="width:auto;padding:8px 16px;font-size:12px;border-color:var(--red);color:var(--red);">✕ এক্সিট</button>
+                </div>
+                <div class="game-card">
+                    <div class="period-label">বর্তমান পিরিয়ড</div>
+                    <div class="period-num" id="gamePeriod">--------</div>
+                    <div class="timer" id="gameTimer">30</div>
+                    <div style="font-size:10px;color:var(--text3);">সেকেন্ড বাকি</div>
+                    <div style="margin-top:5px;font-size:12px;">🏆 জয়: <span style="color:#69f0ae;" id="gameWin">0</span></div>
+                </div>
+                <div style="font-size:11px;color:var(--text3);margin:8px 0 4px;text-align:left;">📌 BIG / SMALL (২x)</div>
+                <div class="bet-row">
+                    <div class="bet-btn big" onclick="selectBet('size','BIG')" id="betBIG">🟢 BIG<span class="mult">x2</span></div>
+                    <div class="bet-btn small" onclick="selectBet('size','SMALL')" id="betSMALL">🔴 SMALL<span class="mult">x2</span></div>
+                </div>
+                <div style="font-size:11px;color:var(--text3);margin:8px 0 4px;text-align:left;">🎨 কালার (৪x)</div>
+                <div class="bet-row">
+                    <div class="bet-btn green" onclick="selectBet('color','green')" id="betgreen">🟢 Green<span class="mult">x4</span></div>
+                    <div class="bet-btn red" onclick="selectBet('color','red')" id="betred">🔴 Red<span class="mult">x4</span></div>
+                    <div class="bet-btn violet" onclick="selectBet('color','violet')" id="betviolet">🟣 Violet<span class="mult">x4</span></div>
+                </div>
+                <div style="font-size:11px;color:var(--text3);margin:8px 0 4px;text-align:left;">🔢 নাম্বার (৯x)</div>
+                <div class="bet-row" style="flex-wrap:wrap;">
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;" onclick="selectBet('number','0')" id="betnum0">0<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;" onclick="selectBet('number','1')" id="betnum1">1<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;" onclick="selectBet('number','2')" id="betnum2">2<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;" onclick="selectBet('number','3')" id="betnum3">3<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;" onclick="selectBet('number','4')" id="betnum4">4<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;margin-top:4px;" onclick="selectBet('number','5')" id="betnum5">5<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;margin-top:4px;" onclick="selectBet('number','6')" id="betnum6">6<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;margin-top:4px;" onclick="selectBet('number','7')" id="betnum7">7<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;margin-top:4px;" onclick="selectBet('number','8')" id="betnum8">8<span class="mult">x9</span></div>
+                    <div class="bet-btn" style="flex:0 0 calc(20% - 6px);padding:8px;margin-top:4px;" onclick="selectBet('number','9')" id="betnum9">9<span class="mult">x9</span></div>
+                </div>
+                <div style="font-size:11px;color:var(--text3);margin:10px 0 4px;text-align:left;">💰 বেট পরিমাণ</div>
+                <div class="amount-row">
+                    <div class="amt-btn" onclick="selectAmount(10)">১০</div>
+                    <div class="amt-btn" onclick="selectAmount(20)">২০</div>
+                    <div class="amt-btn" onclick="selectAmount(50)">৫০</div>
+                    <div class="amt-btn" onclick="selectAmount(100)">১০০</div>
+                    <div class="amt-btn" onclick="selectAmount(500)">৫০০</div>
+                    <div class="amt-btn" onclick="selectAmount(1000)">১০০০</div>
+                </div>
+                <div class="form-group" style="margin-top:4px;"><input type="number" id="customAmount" placeholder="কাস্টম পরিমাণ (টাকা)" min="10" style="padding:10px;font-size:12px;"></div>
+                <div class="confirm-section" id="confirmSection">
+                    <div style="font-size:12px;line-height:1.8;" id="confirmDetails">
+                        📊 পিরিয়ড: <strong id="cPeriod">-</strong><br>
+                        🎲 বেট: <strong id="cChoice">-</strong><br>
+                        💰 পরিমাণ: <strong id="cAmount">-</strong> টাকা<br>
+                        📊 জিতলে পাবেন: <strong id="cWin">-</strong> টাকা (১০% কমিশন বাদে)
+                    </div>
+                    <button class="btn-gold" onclick="placeBet()" style="font-size:13px;padding:12px;">✅ বেট কনফার্ম করুন</button>
+                </div>
+                <div id="gameMessage"></div>
+                <div class="last-results">
+                    <div class="title">📜 শেষ ৫০টি রেজাল্ট</div>
+                    <div class="dots" id="gameResultDots"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="page" id="page-activity">
+            <div class="glass">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('deposit')">💰 ডিপোজিট</button>
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('withdraw')">💸 উইথড্র</button>
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('promo')">🔑 প্রোমো</button>
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('status')">📊 স্ট্যাটাস</button>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('leaderboard')">🏆 লিডারবোর্ড</button>
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showActivityTab('history')">📜 গেম হিস্টোরি</button>
+                </div>
+                <div class="activity-section" id="act-deposit">
+                    <div class="alert alert-info" style="font-size:12px;">📱 বিকাশ সেন্ড মানি: <strong style="color:var(--gold);" id="depBkashDisplay">01868031290</strong></div>
+                    <div class="form-group"><label>পরিমাণ (মিন ১০০)</label><input type="number" id="depAmount" placeholder="যেমন: 100" min="100"></div>
+                    <div class="form-group"><label>ট্রানজেকশন আইডি</label><input type="text" id="depTxn" placeholder="Ref ID"></div>
+                    <button class="btn-gold" onclick="submitDeposit()" style="font-size:13px;">📥 ডিপোজিট সাবমিট</button>
+                    <div id="depMessage"></div>
+                    <div style="margin-top:10px;"><div style="font-size:11px;color:var(--text3);margin-bottom:5px;">📋 আপনার ডিপোজিট হিস্টোরি:</div><div id="depHistory" style="max-height:200px;overflow-y:auto;"></div></div>
+                </div>
+                <div class="activity-section" id="act-withdraw" style="display:none;">
+                    <div class="alert alert-warning" style="font-size:12px;">⚠️ মিনিমাম: <strong>১০০ টাকা</strong></div>
+                    <div class="form-group"><label>পরিমাণ (মিন ১০০)</label><input type="number" id="witAmount" placeholder="যেমন: 100" min="100"></div>
+                    <div class="form-group"><label>বিকাশ নাম্বার</label><input type="text" id="witNumber" placeholder="017xxxxxxxx" maxlength="11"></div>
+                    <button class="btn-gold" onclick="submitWithdraw()" style="font-size:13px;">💸 উইথড্র সাবমিট</button>
+                    <div id="witMessage"></div>
+                    <div style="margin-top:10px;"><div style="font-size:11px;color:var(--text3);margin-bottom:5px;">📋 আপনার উইথড্র হিস্টোরি:</div><div id="witHistory" style="max-height:200px;overflow-y:auto;"></div></div>
+                </div>
+                <div class="activity-section" id="act-promo" style="display:none;">
+                    <div class="alert alert-info" style="font-size:12px;">প্রোমো কোড দিন এবং <strong>১০ টাকা</strong> বোনাস নিন! (দৈনিক ১ বার)</div>
+                    <div class="form-group"><label>প্রোমো কোড</label><input type="text" id="promoInput" placeholder="কোড লিখুন"><div class="hint">এডমিন সেট করবেন</div></div>
+                    <button class="btn-gold" onclick="submitPromo()" style="font-size:13px;">✅ সাবমিট</button>
+                    <div id="promoMessage"></div>
+                </div>
+                <div class="activity-section" id="act-status" style="display:none;">
+                    <div style="text-align:center;">
+                        <div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:10px;margin:5px 0;"><div style="font-size:11px;color:var(--text3);">ইউজার আইডি</div><div style="font-size:18px;color:var(--gold);font-weight:700;font-family:'Orbitron',monospace;" id="sUid">000001</div></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
+                            <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;"><div style="font-size:10px;color:var(--text3);">ব্যালেন্স</div><div style="font-size:16px;color:#69f0ae;font-weight:700;" id="sBalance">0.00</div></div>
+                            <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;"><div style="font-size:10px;color:var(--text3);">মোট জয়</div><div style="font-size:16px;color:var(--gold);font-weight:700;" id="sWin">0.00</div></div>
+                            <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;"><div style="font-size:10px;color:var(--text3);">মোট বেট</div><div style="font-size:16px;color:var(--orange);font-weight:700;" id="sBet">0.00</div></div>
+                            <div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;"><div style="font-size:10px;color:var(--text3);">মোট ডিপোজিট</div><div style="font-size:16px;color:var(--green);font-weight:700;" id="sDep">0.00</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-section" id="act-leaderboard" style="display:none;">
+                    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:8px;">🏆 সবচেয়ে বেশি জয়ী খেলোয়াড়</div>
+                    <div id="leaderboardList"></div>
+                </div>
+                <div class="activity-section" id="act-history" style="display:none;">
+                    <div class="history-tabs">
+                        <div class="tab active" onclick="showHistoryTab('all')" id="htab-all">সবগুলো</div>
+                        <div class="tab" onclick="showHistoryTab('my')" id="htab-my">আমার বেট</div>
+                    </div>
+                    <div id="historyContent" style="max-height:350px;overflow-y:auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div class="page" id="page-account">
+            <div class="glass">
+                <div style="display:flex;gap:6px;margin-bottom:10px;">
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showAccountTab('profile')">👤 প্রোফাইল</button>
+                    <button class="btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="showAccountTab('support')">🆘 সাপোর্ট</button>
+                </div>
+                <div class="account-section" id="acc-profile">
+                    <div style="text-align:center;margin:10px 0;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--gold));margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;" id="avatarLetter">U</div>
+                    </div>
+                    <div class="form-group"><label>ইউজার আইডি</label><input type="text" id="pUid" readonly style="opacity:0.7;"></div>
+                    <div class="form-group"><label>নাম</label><input type="text" id="pName" placeholder="আপনার নাম"></div>
+                    <div class="form-group"><label>ইমেইল</label><input type="text" id="pEmail" readonly style="opacity:0.7;"></div>
+                    <div class="form-group"><label>ফোন</label><input type="text" id="pPhone" placeholder="017xxxxxxxx"></div>
+                    <div class="form-group"><label>জয়েন ডেট</label><input type="text" id="pJoin" readonly style="opacity:0.7;"></div>
+                    <button class="btn-gold" onclick="saveProfile()" style="font-size:13px;">💾 প্রোফাইল সেভ</button>
+                    <div id="profileMessage"></div>
+                </div>
+                <div class="account-section" id="acc-support" style="display:none;">
+                    <div class="alert alert-info" style="font-size:12px;">📞 এডমিনকে সরাসরি মেসেজ করুন</div>
+                    <div class="support-chat" id="supportChat" style="max-height:300px;overflow-y:auto;margin:10px 0;display:flex;flex-direction:column;gap:6px;"></div>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="supportMsgInput" placeholder="এডমিনকে মেসেজ লিখুন..." style="flex:1;padding:12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;font-size:13px;outline:none;">
+                        <button onclick="sendSupportMessage()" style="padding:12px 20px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--orange),var(--gold));color:var(--bg);font-weight:700;cursor:pointer;">➤</button>
+                    </div>
+                    <div id="supportMessage" style="margin-top:8px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div class="page" id="page-admin">
+            <div class="glass">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <div style="font-size:18px;font-weight:700;color:var(--gold);">⚙️ এডমিন প্যানেল</div>
+                    <button class="btn-ghost" onclick="exportAdminData()" style="width:auto;padding:6px 12px;font-size:10px;">📤 Export</button>
+                </div>
+                <div class="admin-tabs">
+                    <div class="tab active" onclick="showAdminTab('users')">👥 ইউজার</div>
+                    <div class="tab" onclick="showAdminTab('deposits')">📥 ডিপোজিট</div>
+                    <div class="tab" onclick="showAdminTab('withdraws')">📤 উইথড্র</div>
+                    <div class="tab" onclick="showAdminTab('game')">🎲 গেম</div>
+                    <div class="tab" onclick="showAdminTab('notices')">📢 নোটিস</div>
+                    <div class="tab" onclick="showAdminTab('messenger')">💬 মেসেঞ্জার</div>
+                    <div class="tab" onclick="showAdminTab('settings')">⚙️ সেটিংস</div>
+                </div>
+                <div class="admin-section show" id="admin-users">
+                    <div style="margin-bottom:8px;"><input type="text" id="adminUserSearch" placeholder="UID/নাম/ইমেইল সার্চ..." style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;font-size:12px;outline:none;" oninput="renderAdminUsers()"></div>
+                    <div id="adminUserList" style="max-height:400px;overflow-y:auto;"></div>
+                </div>
+                <div class="admin-section" id="admin-deposits"><div id="adminDepositList" style="max-height:400px;overflow-y:auto;"></div></div>
+                <div class="admin-section" id="admin-withdraws"><div id="adminWithdrawList" style="max-height:400px;overflow-y:auto;"></div></div>
+                <div class="admin-section" id="admin-game">
+                    <div class="alert alert-info" style="font-size:12px;">🎮 লাইভ গেম - মনিটর</div>
+                    <div id="adminGameList" style="max-height:400px;overflow-y:auto;"></div>
+                </div>
+                <div class="admin-section" id="admin-notices">
+                    <div class="alert alert-info" style="font-size:12px;">📢 এডমিন নোটিস - সব ইউজার দেখতে পাবে</div>
+                    <div class="form-group"><label>নতুন নোটিস লিখুন</label><textarea id="adminNoticeText" placeholder="নোটিসের বিবরণ..." style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;font-size:13px;outline:none;min-height:80px;resize:vertical;font-family:inherit;"></textarea></div>
+                    <button class="btn-gold" onclick="postAdminNotice()" style="font-size:13px;">📢 নোটিস পোস্ট করুন</button>
+                    <div id="adminNoticeMessage"></div>
+                    <div style="margin-top:12px;"><div style="font-size:11px;color:var(--text3);margin-bottom:5px;">📋 পূর্ববর্তী নোটিস:</div><div id="adminNoticeList" style="max-height:250px;overflow-y:auto;"></div></div>
+                </div>
+                <div class="admin-section" id="admin-messenger">
+                    <div class="alert alert-info" style="font-size:12px;">💬 ইউজারদের সাথে মেসেঞ্জার</div>
+                    <input type="text" id="adminMsgSearch" placeholder="UID/নাম সার্চ..." style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;font-size:12px;outline:none;margin-bottom:8px;" oninput="renderAdminMessengerList()">
+                    <div class="messenger-list" id="adminMessengerList"></div>
+                </div>
+                <div class="admin-section" id="admin-settings">
+                    <div class="alert alert-info" style="font-size:12px;">⚙️ প্ল্যাটফর্ম সেটিংস</div>
+                    <div class="form-group"><label>📱 বিকাশ নাম্বার (ডিপোজিট)</label><input type="text" id="adminBkash" placeholder="বিকাশ নাম্বার" maxlength="11"></div>
+                    <div class="form-group"><label>🔑 প্রোমো কোড (দৈনিক ১ বার)</label><input type="text" id="adminPromo" placeholder="প্রোমো কোড"><div class="hint">নতুন কোড দিলে পুরাতনটি আর কাজ করবে না</div></div>
+                    <button class="btn-gold" onclick="saveAdminSettings()" style="font-size:13px;">💾 সেভ সেটিংস</button>
+                    <div id="adminSettingsMessage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="navigate('home')"><span class="icon">🏠</span><span class="label">হোম</span></div>
+        <div class="nav-item" onclick="navigate('game')"><span class="icon">🎮</span><span class="label">গেম</span></div>
+        <div class="nav-item" onclick="navigate('activity')"><span class="icon">📊</span><span class="label">অ্যাক্টিভিটি</span></div>
+        <div class="nav-item" onclick="navigate('account')"><span class="icon">👤</span><span class="label">একাউন্ট</span></div>
+        <div class="nav-item" id="adminNavItem" style="display:none;" onclick="navigate('admin')"><span class="icon">⚙️</span><span class="label">এডমিন</span></div>
+    </div>
+</div>
+
+<script>
+(function(){
+    const c=document.getElementById('stars');
+    for(let i=0;i<100;i++){
+        const s=document.createElement('div');s.className='star';
+        const sz=Math.random()*3+1;s.style.width=sz+'px';s.style.height=sz+'px';
+        s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+        s.style.animationDelay=Math.random()*3+'s';s.style.animationDuration=(Math.random()*3+2)+'s';
+        c.appendChild(s);
+    }
+})();
+const ADMIN_EMAIL='admin@gmail.com',ADMIN_PASSWORD='admin123';
+const gU=()=>JSON.parse(localStorage.getItem('wingo_users')||'[]');
+const sU=u=>localStorage.setItem('wingo_users',JSON.stringify(u));
+const gD=()=>JSON.parse(localStorage.getItem('wingo_deposits')||'[]');
+const sD=d=>localStorage.setItem('wingo_deposits',JSON.stringify(d));
+const gW=()=>JSON.parse(localStorage.getItem('wingo_withdraws')||'[]');
+const sW=w=>localStorage.setItem('wingo_withdraws',JSON.stringify(w));
+const gH=()=>JSON.parse(localStorage.getItem('wingo_gameHistory')||'[]');
+const sH=h=>localStorage.setItem('wingo_gameHistory',JSON.stringify(h));
+const gB=()=>JSON.parse(localStorage.getItem('wingo_myBets')||'[]');
+const sB=b=>localStorage.setItem('wingo_myBets',JSON.stringify(b));
+const gN=()=>JSON.parse(localStorage.getItem('wingo_notices')||'[]');
+const sN=n=>localStorage.setItem('wingo_notices',JSON.stringify(n));
+const gM=()=>JSON.parse(localStorage.getItem('wingo_messages')||'[]');
+const sM=m=>localStorage.setItem('wingo_messages',JSON.stringify(m));
+const gS=()=>JSON.parse(localStorage.getItem('wingo_settings')||'{"bkash":"01868031290","promo":"WINGO2024"}');
+const sS=s=>localStorage.setItem('wingo_settings',JSON.stringify(s));
+let cu=null,cb={type:null,value:null,amount:null},gt=null,gcd=30,cp='',iga=true,snc=0;
+
+function showSignup(){document.getElementById('loginForm').style.display='none';document.getElementById('signupForm').style.display='block';document.getElementById('loginError').style.display='none';document.getElementById('signupError').style.display='none';}
+function showLogin(){document.getElementById('loginForm').style.display='block';document.getElementById('signupForm').style.display='none';document.getElementById('loginError').style.display='none';document.getElementById('signupError').style.display='none';}
+function genUID(){let m=0;gU().forEach(u=>{const n=parseInt(u.uid);if(n>m)m=n;});return String(m+1).padStart(6,'0');}
+
+function handleSignup(){
+    const e=document.getElementById('signupEmail').value.trim().toLowerCase(),p=document.getElementById('signupPassword').value,n=document.getElementById('signupName').value.trim(),er=document.getElementById('signupError');
+    if(!e||!p||!n){er.textContent='সব ফিল্ড পূরণ করুন!';er.style.display='block';return;}
+    if(p.length<6){er.textContent='পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার!';er.style.display='block';return;}
+    let us=gU();if(us.find(u=>u.email===e)){er.textContent='এই ইমেইল ইতিমধ্যে নিবন্ধিত!';er.style.display='block';return;}
+    const uid=genUID();us.push({uid,email:e,password:p,name:n,phone:'',joinDate:new Date().toISOString().split('T')[0],balance:0,totalWin:0,totalBet:0,totalDeposit:0,blocked:false,promoUsed:null,profileSaved:false});
+    sU(us);document.getElementById('signupEmail').value='';document.getElementById('signupPassword').value='';document.getElementById('signupName').value='';
+    showLogin();const le=document.getElementById('loginError');le.textContent='✅ সাইন আপ সম্পন্ন! এখন লগইন করুন।';le.style.display='block';le.style.color='#69f0ae';
+}
+
+function handleLogin(){
+    const e=document.getElementById('loginEmail').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value,er=document.getElementById('loginError');er.style.color='#ff1744';
+    if(e===ADMIN_EMAIL&&p===ADMIN_PASSWORD){
+        let us = gU(), au = us.find(u => u.email === ADMIN_EMAIL);
+    if(!au) {
+        const uid = genUID();
+        au = { uid, email: ADMIN_EMAIL, password: ADMIN_PASSWORD, name: 'Admin', phone: '', joinDate: new Date().toISOString().split('T')[0], balance: 99999, totalWin: 0, totalBet: 0, totalDeposit: 0, blocked: false, promoUsed: null, profileSaved: true, isAdmin: true };
+        us.push(au); sU(us);
+    }
+    cu = au; er.style.display = 'none'; enterApp(); return;
+}
+
+    let us = gU();
+    const u = us.find(u => u.email === e && u.password === p);
+    if(!u) { er.textContent = 'ভুল ইমেইল অথবা পাসওয়ার্ড!'; er.style.display = 'block'; return; }
+    if(u.blocked) { er.textContent = 'আপনার একাউন্ট ব্লক করা হয়েছে!'; er.style.display = 'block'; return; }
+    cu = u; er.style.display = 'none'; enterApp();
+}
+
+function enterApp() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    document.getElementById('displayUid').textContent = 'UID: ' + cu.uid;
+    updateBal(); renderAdminNav(); renderNoticeBar(); renderHomeResults(); startGame();
+}
+
+function updateBal() { document.getElementById('displayBalance').textContent = cu.balance.toFixed(2); }
+
+function syncUser() { const u = gU().find(x => x.uid === cu.uid); if(u) { cu = u; updateBal(); } }
+
+function renderAdminNav() { document.getElementById('adminNavItem').style.display = (cu && (cu.email === ADMIN_EMAIL || cu.isAdmin)) ? 'block' : 'none'; }
+
+function navigate(pg) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const map = { home:'page-home', game:'page-game', activity:'page-activity', account:'page-account', admin:'page-admin' };
+    document.getElementById(map[pg]||'page-home').classList.add('active');
+    const idx = { home:0, game:1, activity:2, account:3, admin:4 };
+    const items = document.querySelectorAll('.nav-item');
+    if(items[idx[pg]||0]) items[idx[pg]||0].classList.add('active');
+    if(pg==='home') renderHomeResults();
+    if(pg==='activity') showActivityTab('deposit');
+    if(pg==='account') showAccountTab('profile');
+    if(pg==='admin') refreshAdmin();
+}
+    
+function genPeriod() {
+    const d = new Date();
+    const p = d.getFullYear().toString().slice(2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+    const ds = (d.getHours()*3600)+(d.getMinutes()*60)+d.getSeconds();
+    return p + String(Math.floor(ds/30)).padStart(5,'0');
+}
+
+function startGame() {
+    if(gt) clearInterval(gt);
+    resetBet();
+    const d = new Date(), ds = (d.getHours()*3600)+(d.getMinutes()*60)+d.getSeconds();
+    gcd = 30-(ds%30); if(gcd===0) gcd=30;
+    cp = genPeriod(); updateGameUI();
+    gt = setInterval(() => {
+        gcd--;
+        if(gcd<=0) { gcd=30; const old = cp; cp = genPeriod(); if(iga) resolveGame(old); resetBet(); }
+        updateGameUI();
+    }, 1000);
+}
+
+function showGamePage() { navigate('game'); resetBet(); updateGameUI(); }
+
+function exitGame() { if(gt) clearInterval(gt); navigate('home'); startGame(); }
+
+function updateGameUI() {
+    document.getElementById('gamePeriod').textContent = cp||'--------';
+    const t = document.getElementById('gameTimer'); t.textContent = gcd;
+    t.className = 'timer'; if(gcd<=5) t.classList.add('warn');
+    document.getElementById('cPeriod').textContent = cp||'-';
+}
+
+function resetBet() { cb={type:null,value:null,amount:null}; document.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected')); document.querySelectorAll('.amt-btn').forEach(a=>a.classList.remove('selected')); document.getElementById('confirmSection').classList.remove('show'); document.getElementById('gameMessage').innerHTML=''; }
+
+function selectBet(t,v) {
+    if(gcd<3) { showMsg('gameMessage','শেষ 3 সেকেন্ডে বেট নেয়া যায় না!','error'); return; }
+    cb.type=t; cb.value=v;
+    document.querySelectorAll('.bet-btn').forEach(b=>b.classList.remove('selected'));
+    const id = t==='size'?'bet'+v : t==='color'?'bet'+v : 'betnum'+v;
+    const el = document.getElementById(id); if(el) el.classList.add('selected');
+    updateConfirm();
+}
+
+function selectAmount(a) {
+    cb.amount=a;
+    document.querySelectorAll('.amt-btn').forEach(x=>x.classList.remove('selected'));
+    if(event && event.target) event.target.classList.add('selected');
+    document.getElementById('customAmount').value='';
+    updateConfirm();
+}
+
+function updateConfirm() {
+    const cst = document.getElementById('customAmount').value;
+    let a = cb.amount; if(cst && parseInt(cst)>=10) a=parseInt(cst);
+    if(cb.type && cb.value && a) {
+        const us = gU(), u = us.find(x=>x.uid===cu.uid);
+        if(!u || u.balance<a) { document.getElementById('confirmSection').classList.remove('show'); return; }
+        cb.amount=a;
+        let d=cb.value;
+        if(cb.type==='size') d=cb.value==='BIG'?'BIG':'SMALL';
+        else if(cb.type==='color') d=cb.value==='green'?'Green':cb.value==='red'?'Red':'Violet';
+        else if(cb.type==='number') d='Num '+cb.value;
+        document.getElementById('cChoice').textContent=d;
+        document.getElementById('cAmount').textContent=a;
+        const mult = cb.type==='size'?2:cb.type==='color'?4:9;
+        document.getElementById('cWin').textContent=(a*mult*0.9).toFixed(2);
+        document.getElementById('confirmSection').classList.add('show');
+    } else { document.getElementById('confirmSection').classList.remove('show'); }
+}
+
+document.getElementById('customAmount').addEventListener('input', updateConfirm);
+
+function placeBet() {
+    if(gcd<3) { showMsg('gameMessage','শেষ 3 সেকেন্ডে বেট নেয়া যায় না!','error'); return; }
+    if(!cb.type||!cb.value||!cb.amount) return;
+    const a=cb.amount; let us=gU(), u=us.find(x=>x.uid===cu.uid);
+    if(!u||u.balance<a) { showMsg('gameMessage','পর্যাপ্ত ব্যালেন্স নেই!','error'); return; }
+    u.balance-=a; u.totalBet+=a; sU(us); syncUser();
+    let b=gB(); b.push({uid:u.uid,period:cp,type:cb.type,value:cb.value,amount:a,resolved:false,won:null,winAmount:0,timestamp:new Date().toISOString()});
+    sB(b); showMsg('gameMessage','বেট প্লেসড! পিরিয়ড: '+cp+' - '+a+' টাকা','success');
+    resetBet();
+}
+
+function resolveGame(period) {
+    const r=Math.floor(Math.random()*10),sz=r>=5?'BIG':'SMALL',cl=['green','red','violet'][r%3];
+    let h=gH(); h.push({period,result:r,size:sz,color:cl,timestamp:new Date().toISOString()});
+    if(h.length>500) h=h.slice(-500); sH(h);
+    let b=gB(), us=gU();
+    b.filter(x=>x.period===period&&!x.resolved).forEach(bet=>{
+        let win=false,mult=0;
+        if(bet.type==='size'&&bet.value===sz){win=true;mult=2;}
+        else if(bet.type==='color'&&bet.value===cl){win=true;mult=4;}
+        else if(bet.type==='number'&&parseInt(bet.value)===r){win=true;mult=9;}
+        bet.resolved=true;
+        if(win){const net=bet.amount*mult*0.9;bet.won=true;bet.winAmount=net;const u=us.find(x=>x.uid===bet.uid);if(u){u.balance+=net;u.totalWin+=net;}}
+        else{bet.won=false;bet.winAmount=0;}
+    });
+    sB(b); sU(us);
+    if(cu){const u=us.find(x=>x.uid===cu.uid);if(u)cu=u;updateBal();}
+    renderHomeResults();
+    if(document.getElementById('page-game').classList.contains('active')) renderGameResults();
+}
+
+function renderHomeResults(){const h=gH().slice(-50).reverse(),c=document.getElementById('homeResultDots');if(!h.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো রেজাল্ট নেই</div>';return;}c.innerHTML=h.map(r=>'<div class="dot '+r.color+' '+(r.size==='BIG'?'big':'small')+'" title="P:'+r.period+'">'+r.result+'</div>').join('');}
+function renderGameResults(){const h=gH().slice(-50).reverse(),c=document.getElementById('gameResultDots');if(!h.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো রেজাল্ট নেই</div>';return;}c.innerHTML=h.map(r=>'<div class="dot '+r.color+' '+(r.size==='BIG'?'big':'small')+'" title="P:'+r.period+'">'+r.result+'</div>').join('');}
+function showMsg(id,t,ty='info'){const e=document.getElementById(id);if(!e)return;const cl=ty==='success'?'alert-success':ty==='error'?'alert-error':'alert-info';e.innerHTML='<div class="alert '+cl+'">'+t+'</div>';setTimeout(()=>{e.innerHTML='';},4000);}
+
+// ACTIVITY
+function showActivityTab(t){document.querySelectorAll('.activity-section').forEach(s=>s.style.display='none');const e=document.getElementById('act-'+t);if(e)e.style.display='block';if(t==='deposit')renderDepHis();if(t==='withdraw')renderWitHis();if(t==='status')renderStat();if(t==='leaderboard')renderLB();if(t==='history')renderGH();}
+function renderDepHis(){const s=gS();document.getElementById('depBkashDisplay').textContent=s.bkash||'01868031290';const a=gD().filter(d=>d.uid===cu.uid).reverse(),c=document.getElementById('depHistory');if(!a.length){c.innerHTML='<div style="color:var(--text3);padding:8px;">কোনো ডিপোজিট নেই</div>';return;}c.innerHTML=a.map(d=>'<div class="txn-item"><div><div>📥 '+d.amount+' টাকা</div><div style="font-size:10px;color:var(--text3);">'+d.date+' | '+d.txn+'</div></div><div class="status '+d.status+'">'+d.status+'</div></div>').join('');}
+function submitDeposit(){const a=parseInt(document.getElementById('depAmount').value),t=document.getElementById('depTxn').value.trim();if(!a||a<100){showMsg('depMessage','মিনিমাম ১০০ টাকা!','error');return;}if(!t){showMsg('depMessage','ট্রানজেকশন আইডি দিন!','error');return;}let d=gD();d.push({uid:cu.uid,amount:a,txn:t,date:new Date().toLocaleString('bn-BD'),status:'pending'});sD(d);document.getElementById('depAmount').value='';document.getElementById('depTxn').value='';showMsg('depMessage','ডিপোজিট সাবমিট!','success');renderDepHis();}
+function renderWitHis(){const a=gW().filter(d=>d.uid===cu.uid).reverse(),c=document.getElementById('witHistory');if(!a.length){c.innerHTML='<div style="color:var(--text3);padding:8px;">কোনো উইথড্র নেই</div>';return;}c.innerHTML=a.map(d=>'<div class="txn-item"><div><div>📤 '+d.amount+' টাকা</div><div style="font-size:10px;color:var(--text3);">'+d.date+' | '+d.number+'</div></div><div class="status '+d.status+'">'+d.status+'</div></div>').join('');}
+function submitWithdraw(){const a=parseInt(document.getElementById('witAmount').value),n=document.getElementById('witNumber').value.trim();if(!a||a<100){showMsg('witMessage','মিনিমাম ১০০ টাকা!','error');return;}if(!n||n.length<11){showMsg('witMessage','সঠিক নাম্বার দিন!','error');return;}if(cu.balance<a){showMsg('witMessage','ব্যালেন্স কম!','error');return;}let us=gU(),u=us.find(x=>x.uid===cu.uid);if(!u||u.balance<a){showMsg('witMessage','ব্যালেন্স কম!','error');return;}u.balance-=a;sU(us);syncUser();let w=gW();w.push({uid:cu.uid,amount:a,number:n,date:new Date().toLocaleString('bn-BD'),status:'pending'});sW(w);document.getElementById('witAmount').value='';document.getElementById('witNumber').value='';showMsg('witMessage','উইথড্র সাবমিট!','success');renderWitHis();}
+function submitPromo(){const c=document.getElementById('promoInput').value.trim();if(!c){showMsg('promoMessage','কোড দিন!','error');return;}let us=gU(),u=us.find(x=>x.uid===cu.uid);if(!u)return;const t=new Date().toISOString().split('T')[0];if(u.promoUsed===t){showMsg('promoMessage','আজ ইতিমধ্যে ব্যবহার করেছেন!','error');return;}const s=gS();if(c!==s.promo){showMsg('promoMessage','ভুল কোড!','error');return;}u.balance+=10;u.promoUsed=t;sU(us);syncUser();document.getElementById('promoInput').value='';showMsg('promoMessage','১০ টাকা বোনাস যোগ হয়েছে!','success');}
+function renderStat(){document.getElementById('sUid').textContent=cu.uid;document.getElementById('sBalance').textContent=cu.balance.toFixed(2)+' টাকা';document.getElementById('sWin').textContent=cu.totalWin.toFixed(2)+' টাকা';document.getElementById('sBet').textContent=cu.totalBet.toFixed(2)+' টাকা';document.getElementById('sDep').textContent=cu.totalDeposit.toFixed(2)+' টাকা';}
+function renderLB(){let u=gU().filter(x=>!x.isAdmin&&x.email!==ADMIN_EMAIL).sort((a,b)=>(b.totalWin||0)-(a.totalWin||0)).slice(0,20);const c=document.getElementById('leaderboardList');if(!u.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো খেলোয়াড় নেই</div>';return;}c.innerHTML=u.map((x,i)=>'<div class="leaderboard-item"><div class="rank '+(i===0?'gold':i===1?'silver':i===2?'bronze':'')+'">'+(i+1)+'</div><div class="info"><div class="name">'+(x.name||x.uid)+'</div><div class="stats">UID: '+x.uid+' | জয়: '+(x.totalWin||0).toFixed(2)+' টাকা</div></div><div style="color:var(--gold);font-weight:700;">'+(x.totalWin||0).toFixed(0)+'</div></div>').join('');}
+function showHistoryTab(t){document.querySelectorAll('.history-tabs .tab').forEach(x=>x.classList.remove('active'));document.getElementById('htab-'+t).classList.add('active');renderGH(t);}
+function renderGH(t='all'){const c=document.getElementById('historyContent');if(t==='all'){const h=gH().slice(-50).reverse();if(!h.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো ইতিহাস নেই</div>';return;}c.innerHTML=h.map(r=>'<div class="txn-item"><div><div style="font-weight:700;">#'+r.period+'</div><div style="font-size:10px;color:var(--text3);">'+(r.color==='green'?'🟢':r.color==='red'?'🔴':'🟣')+' '+r.size+' | নং: '+r.result+'</div></div><div style="font-size:18px;font-weight:900;">'+r.result+'</div></div>').join('');}else{const m=gB().filter(b=>b.uid===cu.uid).reverse().slice(0,50);if(!m.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">আপনার কোনো বেট নেই</div>';return;}c.innerHTML=m.map(b=>{const s=b.resolved?(b.won?'✅ জিতেছে':'❌ হারিয়েছে'):'⏳ বিচারাধীন',cl=b.resolved?(b.won?'#69f0ae':'#ef9a9a'):'#ffcc80';return '<div class="txn-item"><div><div>Period: #'+b.period+'</div><div style="font-size:10px;color:var(--text3);">'+b.value+' | '+b.amount+' টাকা</div></div><div style="text-align:right;"><div style="font-size:11px;color:'+cl+';">'+s+'</div>'+(b.resolved&&b.won?'<div style="font-size:10px;color:var(--gold);">+'+b.winAmount.toFixed(2)+'</div>':'')+'</div></div>';}).join('');}}
+
+// ACCOUNT
+function showAccountTab(t){document.querySelectorAll('.account-section').forEach(s=>s.style.display='none');document.getElementById('acc-'+t).style.display='block';if(t==='profile')loadProf();if(t==='support')loadChat();}
+function loadProf(){document.getElementById('pUid').value=cu.uid;document.getElementById('pName').value=cu.name||'';document.getElementById('pEmail').value=cu.email;document.getElementById('pPhone').value=cu.phone||'';document.getElementById('pJoin').value=cu.joinDate||'-';document.getElementById('avatarLetter').textContent=(cu.name||cu.uid)[0].toUpperCase();}
+function saveProfile(){const n=document.getElementById('pName').value.trim(),p=document.getElementById('pPhone').value.trim();if(!n){showMsg('profileMessage','নাম লিখুন!','error');return;}let us=gU(),u=us.find(x=>x.uid===cu.uid);if(!u)return;u.name=n;u.phone=p;u.profileSaved=true;sU(us);cu=u;showMsg('profileMessage','প্রোফাইল আপডেট!','success');document.getElementById('avatarLetter').textContent=n[0].toUpperCase();}
+function loadChat(){const m=gM().filter(x=>x.to===cu.uid||x.from===cu.uid||x.to==='admin'||x.from==='admin'),c=document.getElementById('supportChat');if(!m.length){c.innerHTML='<div style="color:var(--text3);text-align:center;padding:20px;">এখনো কোনো মেসেজ নেই</div>';return;}c.innerHTML=m.map(x=>{const mine=x.from===cu.uid;return '<div class="msg '+(mine?'user':'admin')+'">'+(mine?'':'<div class="uid-label">📣 এডমিন</div>')+'<div>'+x.text+'</div><div class="time">'+x.time+'</div></div>';}).join('');c.scrollTop=c.scrollHeight;}
+function sendSupportMessage(){const i=document.getElementById('supportMsgInput'),t=i.value.trim();if(!t)return;let m=gM();m.push({from:cu.uid,to:'admin',text:t,time:new Date().toLocaleString('bn-BD'),read:false});sM(m);i.value='';showMsg('supportMessage','মেসেজ পাঠানো হয়েছে!','success');loadChat();}
+
+// NOTICES
+function renderNoticeBar(){const n=gN(),c=document.getElementById('noticeBarContainer');if(!n.length){c.innerHTML='';return;}const l=n[n.length-1],isNew=n.length>snc;c.innerHTML='<div class="admin-notice-bar" onclick="openNoticeModal()">'+(isNew?'<div class="badge-new">!</div>':'')+'<div class="title">📢 '+l.title+'</div><div class="text">'+l.text+'</div><div class="date">'+l.date+' | বিস্তারিত দেখতে ক্লিক করুন</div></div>';if(isNew)snc=n.length;}
+function openNoticeModal(){const n=gN(),c=document.getElementById('noticeList');if(!n.length){c.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);">কোনো নোটিস নেই</div>';}else{c.innerHTML=n.reverse().map(x=>'<div class="item"><div style="color:var(--gold);font-weight:700;">📢 '+x.title+'</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">'+x.text+'</div><div style="font-size:10px;color:var(--text3);margin-top:4px;">📅 '+x.date+'</div></div>').join('');}document.getElementById('noticeModal').classList.add('show');renderNoticeBar();}
+function closeNoticeModal(){document.getElementById('noticeModal').classList.remove('show');}
+
+// ADMIN
+function showAdminTab(t){document.querySelectorAll('.admin-tabs .tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('show'));document.getElementById('admin-'+t).classList.add('show');document.querySelectorAll('.admin-tabs .tab').forEach(x=>{if(x.textContent.includes(t==='users'?'ইউজার':t==='deposits'?'ডিপোজিট':t==='withdraws'?'উইথড্র':t==='game'?'গেম':t==='notices'?'নোটিস':t==='messenger'?'মেসেঞ্জার':'সেটিংস'))x.classList.add('active');});if(t==='users')renderAdminUsers();if(t==='deposits')renderAdminDep();if(t==='withdraws')renderAdminWit();if(t==='game')renderAdminGame();if(t==='notices')renderAdminNotices();if(t==='messenger')renderAdminMsgList();if(t==='settings')loadAdminSets();}
+function refreshAdmin(){renderAdminUsers();renderAdminDep();renderAdminWit();renderAdminGame();renderAdminNotices();renderAdminMsgList();loadAdminSets();}
+
+function renderAdminUsers(){const s=(document.getElementById('adminUserSearch').value||'').toLowerCase(),us=gU().filter(u=>!u.isAdmin&&u.email!==ADMIN_EMAIL&&(!s||u.uid.includes(s)||(u.name||'').toLowerCase().includes(s)||u.email.includes(s))),c=document.getElementById('adminUserList');if(!us.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো ইউজার নেই</div>';return;}c.innerHTML=us.map(u=>'<div class="admin-user-item"><div class="row"><div><strong>'+(u.name||u.uid)+'</strong> | UID: '+u.uid+'<div style="font-size:10px;color:var(--text3);">💳 '+u.balance.toFixed(2)+' | জয়: '+(u.totalWin||0).toFixed(2)+' | বেট: '+(u.totalBet||0).toFixed(2)+'</div><div style="font-size:10px;color:'+(u.blocked?'var(--red)':'#69f0ae')+';">'+(u.blocked?'ব্লকড':'অ্যাকটিভ')+'</div></div><div class="actions"><button style="background:var(--green);color:#000;" onclick="adminAddBal(\''+u.uid+'\')">+ টাকা</button><button style="background:'+(u.blocked?'#69f0ae':'var(--red)')+';color:#fff;" onclick="adminToggle(\''+u.uid+'\')">'+(u.blocked?'আনব্লক':'ব্লক')+'</button><button style="background:var(--blue);color:#fff;" onclick="adminMsg(\''+u.uid+'\')">📩</button></div></div></div>').join('');}
+
+function adminAddBal(uid){const a=prompt('টাকা (1-1000):');if(!a)return;const am=parseInt(a);if(isNaN(am)||am<1||am>1000){alert('1-1000 টাকা');return;}let us=gU(),u=us.find(x=>x.uid===uid);if(!u)return;u.balance+=am;sU(us);if(cu.uid===uid){cu.balance+=am;updateBal();}renderAdminUsers();alert(uid+' কে '+am+' টাকা দেয়া হয়েছে!');}
+function adminToggle(uid){let us=gU(),u=us.find(x=>x.uid===uid);if(!u)return;u.blocked=!u.blocked;sU(us);if(cu.uid===uid)cu.blocked=u.blocked;renderAdminUsers();}
+function adminMsg(uid){document.getElementById('adminChatTargetName').textContent='UID: '+uid;document.getElementById('adminChatOverlay').dataset.targetUid=uid;document.getElementById('adminChatOverlay').classList.add('show');renderAdminChat(uid);}
+
+function renderAdminDep(){const a=gD().reverse(),c=document.getElementById('adminDepositList');if(!a.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো ডিপোজিট নেই</div>';return;}c.innerHTML=a.map(d=>{const p=d.status==='pending';return '<div class="txn-item"><div><div>📥 '+d.amount+' টাকা | UID: '+d.uid+'</div><div style="font-size:10px;color:var(--text3);">'+d.date+' | '+d.txn+'</div></div><div>'+(p?'<button style="background:var(--green);color:#000;padding:4px 12px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;" onclick="adminAppDep(\''+d.txn+'\')">✅ অ্যাপ্রুভ</button> <button style="background:var(--red);color:#fff;padding:4px 12px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;" onclick="adminRejDep(\''+d.txn+'\')">❌ রিজেক্ট</button>':'<div class="status '+d.status+'">'+(d.status==='approved'?'✅':'❌')+' '+d.status+'</div>')+'</div></div>';}).join('');}
+
+function adminAppDep(txn){let d=gD();const dep=d.find(x=>x.txn===txn&&x.status==='pending');if(!dep){alert('পাওয়া যায়নি!');return;}dep.status='approved';sD(d);let us=gU(),u=us.find(x=>x.uid===dep.uid);if(u){u.balance+=dep.amount;u.totalDeposit+=dep.amount;sU(us);if(cu.uid===dep.uid){cu.balance+=dep.amount;updateBal();}}renderAdminDep();}
+function adminRejDep(txn){let d=gD();const dep=d.find(x=>x.txn===txn&&x.status==='pending');if(!dep){alert('পাওয়া যায়নি!');return;}dep.status='rejected';sD(d);renderAdminDep();}
+
+function renderAdminWit(){const a=gW().reverse(),c=document.getElementById('adminWithdrawList');if(!a.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো উইথড্র নেই</div>';return;}c.innerHTML=a.map(w=>{const p=w.status==='pending',key=w.uid+'_'+w.amount+'_'+w.date;return '<div class="txn-item"><div><div>📤 '+w.amount+' টাকা | UID: '+w.uid+'</div><div style="font-size:10px;color:var(--text3);">'+w.date+' | '+w.number+'</div></div><div>'+(p?'<button style="background:var(--green);color:#000;padding:4px 12px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;" onclick="adminAppWit(\''+w.uid+'\','+w.amount+',\''+w.date+'\')">✅ অ্যাপ্রুভ</button> <button style="background:var(--red);color:#fff;padding:4px 12px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;" onclick="adminRejWit(\''+w.uid+'\','+w.amount+',\''+w.date+'\')">❌ রিজেক্ট</button>':'<div class="status '+w.status+'">'+(w.status==='approved'?'✅':'❌')+' '+w.status+'</div>')+'</div></div>';}).join('');}
+
+function adminAppWit(uid,amt,date){let w=gW();const wd=w.find(x=>x.uid===uid&&x.amount===amt&&x.date===date&&x.status==='pending');if(!wd){alert('পাওয়া যায়নি!');return;}wd.status='approved';sW(w);renderAdminWit();}
+function adminRejWit(uid,amt,date){let w=gW();const wd=w.find(x=>x.uid===uid&&x.amount===amt&&x.date===date&&x.status==='pending');if(!wd){alert('পাওয়া যায়নি!');return;}wd.status='rejected';sW(w);let us=gU(),u=us.find(x=>x.uid===uid);if(u){u.balance+=amt;sU(us);if(cu.uid===uid){cu.balance+=amt;updateBal();}}renderAdminWit();}
+
+function renderAdminGame(){const h=gH().slice(-20).reverse(),c=document.getElementById('adminGameList');c.innerHTML='<div class="alert alert-info">বর্তমান পিরিয়ড: <strong>'+cp+'</strong> | সময়: '+gcd+'s</div><div id="adminGameHistory" style="max-height:300px;overflow-y:auto;">'+(h.length?h.map(r=>'<div class="live-game-item"><div class="row"><span>#'+r.period+'</span><span>'+(r.color==='green'?'🟢':r.color==='red'?'🔴':'🟣')+' '+r.size+' | নং: '+r.result+'</span></div></div>').join(''):'<div style="color:var(--text3);padding:10px;">কোনো রেজাল্ট নেই</div>')+'</div>';}
+
+function renderAdminNotices(){const n=gN(),c=document.getElementById('adminNoticeList');if(!n.length){c.innerHTML='<div style="color:var(--text3);padding:8px;">কোনো নোটিস নেই</div>';return;}c.innerHTML=n.reverse().map(x=>'<div class="txn-item"><div><div style="font-weight:700;">📢 '+x.title+'</div><div style="font-size:10px;color:var(--text3);">'+x.text+' | '+x.date+'</div></div></div>').join('');}
+function postAdminNotice(){const t=document.getElementById('adminNoticeText').value.trim();if(!t){showMsg('adminNoticeMessage','টেক্সট লিখুন!','error');return;}let n=gN();n.push({title:'এডমিন নোটিস',text:t,date:new Date().toLocaleString('bn-BD')});sN(n);document.getElementById('adminNoticeText').value='';showMsg('adminNoticeMessage','নোটিস পোস্ট!','success');renderAdminNotices();renderNoticeBar();}
+
+function renderAdminMsgList(){const s=(document.getElementById('adminMsgSearch')||{value:''}).value.toLowerCase(),m=gM();const uidSet=new Set();m.forEach(x=>{if(x.from!=='admin')uidSet.add(x.from);if(x.to!=='admin')uidSet.add(x.to);});let ids=Array.from(uidSet);if(s)ids=ids.filter(id=>id.includes(s));const c=document.getElementById('adminMessengerList'),us=gU();if(!ids.length){c.innerHTML='<div style="color:var(--text3);padding:10px;">কোনো ইউজার নেই</div>';return;}c.innerHTML=ids.map(id=>{const u=us.find(x=>x.uid===id),nm=u?(u.name||id):id,un=m.filter(x=>x.from===id&&x.to==='admin'&&!x.read).length;return '<div class="user-item" onclick="adminMsg(\''+id+'\')"><div class="row"><div><strong>'+nm+'</strong><div style="font-size:10px;color:var(--text3);">UID: '+id+'</div></div>'+(un>0?'<div class="unread">'+un+'</div>':'')+'</div></div>';}).join('');}
+
+function renderAdminChat(uid){const m=gM().filter(x=>(x.from===uid&&x.to==='admin')||(x.from==='admin'&&x.to===uid)),c=document.getElementById('adminChatMessages');if(!m.length){c.innerHTML='<div style="color:var(--text3);text-align:center;padding:20px;">কোনো কথোপকথন নেই</div>';}else{c.innerHTML=m.map(x=>{const isAdmin=x.from==='admin';return '<div class="msg '+(isAdmin?'admin':'user')+'">'+(isAdmin?'<div class="uid-label">📣 এডমিন</div>':'<div class="uid-label">👤 ইউজার</div>')+'<div>'+x.text+'</div><div class="time">'+x.time+'</div></div>';}).join('');}c.scrollTop=c.scrollHeight;let ms=gM(),ch=false;ms.forEach(x=>{if(x.from===uid&&x.to==='admin'&&!x.read){x.read=true;ch=true;}});if(ch)sM(ms);renderAdminMsgList();}
+
+function sendAdminChatMsg(){const i=document.getElementById('adminChatInput'),t=i.value.trim(),uid=document.getElementById('adminChatOverlay').dataset.targetUid;if(!t||!uid)return;let m=gM();m.push({from:'admin',to:uid,text:t,time:new Date().toLocaleString('bn-BD'),read:false});sM(m);i.value='';renderAdminChat(uid);}
+function closeAdminChat(){document.getElementById('adminChatOverlay').classList.remove('show');renderAdminMsgList();}
+
+function loadAdminSets(){const s=gS();document.getElementById('adminBkash').value=s.bkash||'';document.getElementById('adminPromo').value=s.promo||'';}
+function saveAdminSettings(){const b=document.getElementById('adminBkash').value.trim(),p=document.getElementById('adminPromo').value.trim();if(!b||!p){showMsg('adminSettingsMessage','সব ফিল্ড পূরণ করুন!','error');return;}let s=gS();const old=s.promo;s.bkash=b;s.promo=p;sS(s);if(old!==p){let us=gU();us.forEach(u=>{u.promoUsed=null;});sU(us);}showMsg('adminSettingsMessage','সেটিংস আপডেট!','success');const db=document.getElementById('depBkashDisplay');if(db)db.textContent=b;}
+function exportAdminData(){const data={users:gU(),deposits:gD(),withdraws:gW(),gameHistory:gH(),notices:gN(),messages:gM(),settings:gS()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wingo_backup.json';a.click();alert('ডাটা এক্সপোর্ট!');}
+
+document.addEventListener('DOMContentLoaded',function(){const ci=document.getElementById('customAmount');if(ci)ci.addEventListener('input',updateConfirm);document.getElementById('loginPassword').addEventListener('keypress',function(e){if(e.key==='Enter')handleLogin();});document.getElementById('signupPassword').addEventListener('keypress',function(e){if(e.key==='Enter')handleSignup();});});
+console.log('%c WINGO v3.0 FIXED','background:linear-gradient(135deg,#ff6b35,#f7c948);color:#000;font-size:16px;font-weight:bold;padding:8px;border-radius:4px;');
+console.log('Login: admin@gmail.com / admin123');
+</script>
+</body>
+</html>
